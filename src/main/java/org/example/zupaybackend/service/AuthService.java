@@ -1,9 +1,12 @@
 package org.example.zupaybackend.service;
 
 import org.example.zupaybackend.dto.RegisterRequest;
+import org.example.zupaybackend.dto.LoginRequest;
+import org.example.zupaybackend.dto.AuthResponse;
 import org.example.zupaybackend.model.User;
 import org.example.zupaybackend.repository.UserRepository;
 
+import com.google.zxing.*;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
@@ -16,20 +19,23 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.security.SecureRandom;
 import java.util.regex.Pattern;
-
+import java.util.Base64;
 
 @Service
 public class AuthService {
 
     private final UserRepository userRepository;
+    private final JwtService jwtService;
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
     private final SecureRandom random = new SecureRandom();
 
     private static final Pattern STRONG_PASSWORD =
             Pattern.compile("^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=!]).{8,}$");
 
-    public AuthService(UserRepository userRepository) {
+    public AuthService(UserRepository userRepository, JwtService jwtService) {
         this.userRepository = userRepository;
+        this.jwtService = jwtService;
+
     }
 
     public User register(RegisterRequest req) {
@@ -63,8 +69,22 @@ public class AuthService {
 
         return userRepository.save(user);
     }
+    //  Login
+    public AuthResponse login(LoginRequest req) {
+        User user = userRepository.findByUsername(req.getUsername())
+                .orElseThrow(() -> new RuntimeException("User not found"));
 
-    // ---------- Helper Methods ----------
+        if (!passwordEncoder.matches(req.getPassword(), user.getPassword())) {
+            throw new RuntimeException("Invalid credentials");
+        }
+
+        String token = jwtService.generateToken(user);
+        String qrCodeBase64 = Base64.getEncoder().encodeToString(user.getQrCode());
+
+        return new AuthResponse("Login successful", token, user.getUniqueUserId(), qrCodeBase64);
+    }
+
+    //  Helper Methods
 
     private String generateUniqueUserId(String name) {
         String prefix = name.length() >= 3
