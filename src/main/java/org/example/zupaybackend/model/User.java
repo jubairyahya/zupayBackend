@@ -28,7 +28,14 @@ public class User {
     @Lob
     private byte[] qrCode;
 
-    // ----- Getters & Setters -----
+    @Column(nullable = false)
+    private boolean bankLinked = false;
+
+    @Column(nullable = false)
+    private int bankBalance = 0;
+
+
+    // Getters & Setters
 
     public Long getId() {
         return id;
@@ -77,4 +84,16 @@ public class User {
     public void setQrCode(byte[] qrCode) {
         this.qrCode = qrCode;
     }
+
+    public boolean isBankLinked() {
+        return bankLinked;
+    }
+    public void setBankLinked(boolean bankLinked) {this.bankLinked = bankLinked;
+    }
+    public int getBankBalance() {
+        return bankBalance;
+    }
+    public void setBankBalance(int bankBalance) {this.bankBalance = bankBalance;
+    }
+
 }

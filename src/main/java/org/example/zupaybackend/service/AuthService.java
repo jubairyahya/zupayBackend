@@ -81,7 +81,11 @@ public class AuthService {
         String token = jwtService.generateToken(user);
         String qrCodeBase64 = Base64.getEncoder().encodeToString(user.getQrCode());
 
-        return new AuthResponse("Login successful", token, user.getUniqueUserId(), qrCodeBase64);
+        boolean bankLinked=false;
+        int bankBalance=0;
+
+        return new AuthResponse("Login successful", token, user.getUniqueUserId(),
+                qrCodeBase64,user.getName(),bankLinked,bankBalance);
     }
 
     //  Helper Methods
@@ -115,4 +119,9 @@ public class AuthService {
             throw new RuntimeException("QR generation failed", e);
         }
     }
+    public User getUserByUsername(String username) {
+        return userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+    }
+
 }
