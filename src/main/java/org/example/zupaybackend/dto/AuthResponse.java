@@ -5,8 +5,6 @@ public class AuthResponse {
     private String token;
     private String uniqueUserId;
     private String qrCode;
-
-
     private String name;
     private boolean bankLinked;
     private int bankBalance;
@@ -29,5 +27,4 @@ public class AuthResponse {
     public String getName() { return name; }
     public boolean isBankLinked() { return bankLinked; }
     public int getBankBalance() { return bankBalance; }
-
 }

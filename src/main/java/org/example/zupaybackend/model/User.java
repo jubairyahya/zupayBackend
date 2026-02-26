@@ -34,6 +34,9 @@ public class User {
     @Column(nullable = false)
     private int bankBalance = 0;
 
+    private String accountHolderName;
+    private String sortCode;
+    private String accountNumber;
 
     // Getters & Setters
 
@@ -95,5 +98,13 @@ public class User {
     }
     public void setBankBalance(int bankBalance) {this.bankBalance = bankBalance;
     }
+    public String getAccountHolderName() { return accountHolderName; }
+    public void setAccountHolderName(String accountHolderName) { this.accountHolderName = accountHolderName; }
+
+    public String getSortCode() { return sortCode; }
+    public void setSortCode(String sortCode) { this.sortCode = sortCode; }
+
+    public String getAccountNumber() { return accountNumber; }
+    public void setAccountNumber(String accountNumber) { this.accountNumber = accountNumber; }
 
 }

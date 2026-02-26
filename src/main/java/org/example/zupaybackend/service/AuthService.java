@@ -13,6 +13,7 @@ import com.google.zxing.qrcode.QRCodeWriter;
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -26,6 +27,7 @@ public class AuthService {
 
     private final UserRepository userRepository;
     private final JwtService jwtService;
+
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
     private final SecureRandom random = new SecureRandom();
 
@@ -123,5 +125,20 @@ public class AuthService {
         return userRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("User not found"));
     }
+    @Transactional
+    public User linkBankAccount(String username, String accountHolderName, String accountNumber, String sortCode) {
+        User user = getUserByUsername(username);
 
+        if (user.isBankLinked()) {
+            throw new RuntimeException("Bank already linked");
+        }
+
+        user.setAccountHolderName(accountHolderName);
+        user.setAccountNumber(accountNumber);
+        user.setSortCode(sortCode);
+        user.setBankLinked(true);
+        user.setBankBalance(1000); // initial balance
+
+        return userRepository.save(user);
+    }
 }

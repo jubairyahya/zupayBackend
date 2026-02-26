@@ -5,6 +5,7 @@ package org.example.zupaybackend.controller;
 import org.example.zupaybackend.dto.RegisterRequest;
 import org.example.zupaybackend.dto.LoginRequest;
 import org.example.zupaybackend.dto.AuthResponse;
+import org.example.zupaybackend.dto.BankLinkRequest;
 import org.example.zupaybackend.model.User;
 import org.example.zupaybackend.service.AuthService;
 import org.example.zupaybackend.service.TokenBlacklist;
@@ -76,8 +77,6 @@ public class AuthController {
 
         String qrBase64 = Base64.getEncoder().encodeToString(user.getQrCode());
 
-        boolean bankLinked = false;
-        int bankBalance = 0;
 
         AuthResponse response = new AuthResponse(
                 "Profile fetched successfully",
@@ -85,10 +84,35 @@ public class AuthController {
                 user.getUniqueUserId(),
                 qrBase64,
                 user.getName(),
-                bankLinked,
-                bankBalance
+                user.isBankLinked(),
+                user.getBankBalance()
         );
 
         return ResponseEntity.ok(response);
+    }
+    @PostMapping("/link-bank")
+    public ResponseEntity<?> linkBank(
+            @RequestHeader("Authorization") String authHeader,
+            @RequestBody BankLinkRequest request) {
+
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            return ResponseEntity.status(401).body("Missing token");
+        }
+
+        String token = authHeader.substring(7);
+        String username = jwtService.extractUsername(token);
+
+        User user = authService.linkBankAccount(
+                username,
+                request.getAccountHolderName(),
+                request.getAccountNumber(),
+                request.getSortCode()
+        );
+
+        return ResponseEntity.ok(Map.of(
+                "message", "Bank linked successfully",
+                "bankLinked", user.isBankLinked(),
+                "bankBalance", user.getBankBalance()
+        ));
     }
 }
