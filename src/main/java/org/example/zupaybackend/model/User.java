@@ -20,19 +20,20 @@ public class User {
     @Column(unique = true, nullable = false)
     private String username;
 
+    @Column(nullable=false)
     private String password;
 
-    @Column(unique = true)
+    @Column(unique = true, nullable = false)
     private String uniqueUserId;
 
-    @Lob
-    private byte[] qrCode;
+    @Column(unique=true, length=2000)
+    private String qrCode;
 
     @Column(nullable = false)
     private boolean bankLinked = false;
 
     @Column(nullable = false)
-    private int bankBalance = 0;
+    private Double bankBalance = 0.0;
 
     private String accountHolderName;
     private String sortCode;
@@ -80,23 +81,18 @@ public class User {
         this.uniqueUserId = uniqueUserId;
     }
 
-    public byte[] getQrCode() {
-        return qrCode;
-    }
-
-    public void setQrCode(byte[] qrCode) {
-        this.qrCode = qrCode;
-    }
+    public String getQrCode() { return qrCode; }
+    public void setQrCode(String qrCode) { this.qrCode = qrCode; }
 
     public boolean isBankLinked() {
         return bankLinked;
     }
     public void setBankLinked(boolean bankLinked) {this.bankLinked = bankLinked;
     }
-    public int getBankBalance() {
+    public Double getBankBalance() {
         return bankBalance;
     }
-    public void setBankBalance(int bankBalance) {this.bankBalance = bankBalance;
+    public void setBankBalance(Double bankBalance) {this.bankBalance = bankBalance;
     }
     public String getAccountHolderName() { return accountHolderName; }
     public void setAccountHolderName(String accountHolderName) { this.accountHolderName = accountHolderName; }

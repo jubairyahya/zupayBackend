@@ -59,15 +59,16 @@ public class AuthService {
         } while (userRepository.existsByUniqueUserId(uniqueUserId));
 
         //  Generate QR code for unique userId
-        byte[] qrCode = generateQrCode(uniqueUserId);
+        byte[] qrBytes = generateQrCode(uniqueUserId);
+        String qrBase64 = Base64.getEncoder().encodeToString(qrBytes);
 
-        // 5Save user
+        // Save user
         User user = new User();
         user.setName(req.getName());
         user.setUsername(req.getUsername());
         user.setPassword(passwordEncoder.encode(req.getPassword()));
         user.setUniqueUserId(uniqueUserId);
-        user.setQrCode(qrCode);
+        user.setQrCode(qrBase64);
 
         return userRepository.save(user);
     }
@@ -81,13 +82,9 @@ public class AuthService {
         }
 
         String token = jwtService.generateToken(user);
-        String qrCodeBase64 = Base64.getEncoder().encodeToString(user.getQrCode());
-
-        boolean bankLinked=false;
-        int bankBalance=0;
 
         return new AuthResponse("Login successful", token, user.getUniqueUserId(),
-                qrCodeBase64,user.getName(),bankLinked,bankBalance);
+                user.getQrCode(),user.getName(), user.isBankLinked(), user.getBankBalance());
     }
 
     //  Helper Methods
@@ -137,8 +134,7 @@ public class AuthService {
         user.setAccountNumber(accountNumber);
         user.setSortCode(sortCode);
         user.setBankLinked(true);
-        user.setBankBalance(1000); // initial balance
-
+        user.setBankBalance(1000.00); // initial balance
         return userRepository.save(user);
     }
 }

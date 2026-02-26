@@ -6,13 +6,13 @@ public class UserProfile {
     private String uniqueUserId;
     private String qrCode;
     private boolean bankLinked;
-    private int bankBalance;
+    private Double bankBalance;
 
 // Constructors
 public UserProfile() {}
 
 public UserProfile(String name, String username, String uniqueUserId, String qrCode,
-                   boolean bankLinked, int bankBalance) {
+                   boolean bankLinked, Double bankBalance) {
     this.name = name;
     this.username = username;
     this.uniqueUserId = uniqueUserId;
@@ -37,6 +37,6 @@ public void setQrCode(String qrCode) { this.qrCode = qrCode; }
 public boolean isBankLinked() { return bankLinked; }
 public void setBankLinked(boolean bankLinked) { this.bankLinked = bankLinked; }
 
-public int getBankBalance() { return bankBalance; }
-public void setBankBalance(int bankBalance) { this.bankBalance = bankBalance; }
+public Double getBankBalance() { return bankBalance; }
+public void setBankBalance(Double bankBalance) { this.bankBalance = bankBalance; }
 }

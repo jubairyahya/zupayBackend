@@ -36,12 +36,12 @@ public class AuthController {
 
         // convert qr bytes to base 64
 
-        String qrBase64 = Base64.getEncoder().encodeToString(user.getQrCode());
+
 
         return ResponseEntity.ok(Map.of(
                 "message", "Registered successfully!",
                 "uniqueUserId", user.getUniqueUserId(),
-                "qrCode", qrBase64
+                "qrCode", user.getQrCode()
         ));
     }
     @PostMapping("/login")
@@ -75,14 +75,12 @@ public class AuthController {
 
         User user = authService.getUserByUsername(username); // add this method in AuthService
 
-        String qrBase64 = Base64.getEncoder().encodeToString(user.getQrCode());
-
 
         AuthResponse response = new AuthResponse(
                 "Profile fetched successfully",
                 token,
                 user.getUniqueUserId(),
-                qrBase64,
+                user.getQrCode(),
                 user.getName(),
                 user.isBankLinked(),
                 user.getBankBalance()

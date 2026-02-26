@@ -7,10 +7,10 @@ public class AuthResponse {
     private String qrCode;
     private String name;
     private boolean bankLinked;
-    private int bankBalance;
+    private Double bankBalance;
 
     public AuthResponse(String message, String token, String uniqueUserId, String qrCode,
-                        String name, boolean bankLinked, int bankBalance) {
+                        String name, boolean bankLinked, Double bankBalance) {
         this.message = message;
         this.token = token;
         this.uniqueUserId = uniqueUserId;
@@ -26,5 +26,5 @@ public class AuthResponse {
     public String getQrCode() { return qrCode; }
     public String getName() { return name; }
     public boolean isBankLinked() { return bankLinked; }
-    public int getBankBalance() { return bankBalance; }
+    public Double getBankBalance() { return bankBalance; }
 }
