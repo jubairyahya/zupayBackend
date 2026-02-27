@@ -39,6 +39,11 @@ public class AuthService {
         this.jwtService = jwtService;
 
     }
+    // Fetch user by unique user ID (or QR code)
+    public User getUserByUniqueId(String uniqueId) {
+        return userRepository.findByUniqueUserId(uniqueId)
+                .orElseThrow(() -> new RuntimeException("User not found with ID: " + uniqueId));
+    }
 
     public User register(RegisterRequest req) {
 
@@ -137,4 +142,5 @@ public class AuthService {
         user.setBankBalance(1000.00); // initial balance
         return userRepository.save(user);
     }
+
 }
