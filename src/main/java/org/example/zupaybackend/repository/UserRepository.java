@@ -11,4 +11,5 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     Optional<User> findByUniqueUserId(String uniqueUserId);
     Optional<User> findByQrCode(String qrCode);
+    Optional<User> findByRefreshToken(String refreshToken);
 }

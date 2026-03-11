@@ -8,6 +8,7 @@ public class AuthResponse {
     private String name;
     private boolean bankLinked;
     private Double bankBalance;
+    private String refreshToken;
 
     public AuthResponse(String message, String token, String uniqueUserId, String qrCode,
                         String name, boolean bankLinked, Double bankBalance) {
@@ -27,4 +28,11 @@ public class AuthResponse {
     public String getName() { return name; }
     public boolean isBankLinked() { return bankLinked; }
     public Double getBankBalance() { return bankBalance; }
+    public String getRefreshToken() {
+        return refreshToken;
+    }
+
+    public void setRefreshToken(String refreshToken) {
+        this.refreshToken = refreshToken;
+    }
 }

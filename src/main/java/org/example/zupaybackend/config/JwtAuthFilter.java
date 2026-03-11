@@ -32,6 +32,13 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             HttpServletResponse response,
             FilterChain filterChain) throws ServletException, IOException {
 
+        // ── Let OPTIONS preflight requests pass through immediately ──
+        if ("OPTIONS".equalsIgnoreCase(request.getMethod())) {
+            response.setStatus(HttpServletResponse.SC_OK);
+            filterChain.doFilter(request, response);
+            return;
+        }
+
         final String authHeader = request.getHeader("Authorization");
         final String jwt;
         final String username;
@@ -47,14 +54,13 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             return;
         }
+
         username = jwtService.extractUsername(jwt);
 
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            // Simple authentication object without roles for now
             UsernamePasswordAuthenticationToken authToken =
-                    new UsernamePasswordAuthenticationToken(username, null,  Collections.emptyList());
+                    new UsernamePasswordAuthenticationToken(username, null, Collections.emptyList());
             authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-
             SecurityContextHolder.getContext().setAuthentication(authToken);
         }
 

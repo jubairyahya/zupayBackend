@@ -88,8 +88,15 @@ public class AuthService {
 
         String token = jwtService.generateToken(user);
 
-        return new AuthResponse("Login successful", token, user.getUniqueUserId(),
-                user.getQrCode(),user.getName(), user.isBankLinked(), user.getBankBalance());
+        // Generate refresh token
+        String refreshToken = java.util.UUID.randomUUID().toString();
+        user.setRefreshToken(refreshToken);
+        userRepository.save(user);
+
+        AuthResponse response = new AuthResponse("Login successful", token, user.getUniqueUserId(),
+                user.getQrCode(), user.getName(), user.isBankLinked(), user.getBankBalance());
+        response.setRefreshToken(refreshToken);
+        return response;
     }
 
     //  Helper Methods
@@ -141,6 +148,12 @@ public class AuthService {
         user.setBankLinked(true);
         user.setBankBalance(1000.00); // initial balance
         return userRepository.save(user);
+
+
+    }
+    public User getUserByRefreshToken(String refreshToken) {
+        return userRepository.findByRefreshToken(refreshToken)
+                .orElseThrow(() -> new RuntimeException("Invalid refresh token"));
     }
 
 }

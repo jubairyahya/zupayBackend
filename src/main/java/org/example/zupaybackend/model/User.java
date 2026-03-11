@@ -39,6 +39,9 @@ public class User {
     private String sortCode;
     private String accountNumber;
 
+    @Column(name = "refresh_token")
+    private String refreshToken;
+
     // Getters & Setters
 
     public Long getId() {
@@ -103,4 +106,11 @@ public class User {
     public String getAccountNumber() { return accountNumber; }
     public void setAccountNumber(String accountNumber) { this.accountNumber = accountNumber; }
 
+    public String getRefreshToken() {
+        return refreshToken;
+    }
+
+    public void setRefreshToken(String refreshToken) {
+        this.refreshToken = refreshToken;
+    }
 }
