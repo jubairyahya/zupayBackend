@@ -2,6 +2,7 @@ package org.example.zupaybackend.config;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.example.zupaybackend.service.JwtService;
@@ -32,38 +33,66 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             HttpServletResponse response,
             FilterChain filterChain) throws ServletException, IOException {
 
-        // ── Let OPTIONS preflight requests pass through immediately ──
+        // Let OPTIONS preflight pass through immediately
         if ("OPTIONS".equalsIgnoreCase(request.getMethod())) {
             response.setStatus(HttpServletResponse.SC_OK);
             filterChain.doFilter(request, response);
             return;
         }
 
-        final String authHeader = request.getHeader("Authorization");
-        final String jwt;
-        final String username;
 
-        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+        String jwt = extractToken(request);
+
+        if (jwt == null) {
+            // No token found at all — let the request through unauthenticated
+            // Spring Security will block it if the route requires auth
             filterChain.doFilter(request, response);
             return;
         }
 
-        jwt = authHeader.substring(7);
-
+        //  Reject blacklisted tokens
         if (tokenBlacklist.contains(jwt)) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             return;
         }
 
-        username = jwtService.extractUsername(jwt);
+        // Validate and set authentication in context
+        String username = jwtService.extractUsername(jwt);
 
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             UsernamePasswordAuthenticationToken authToken =
-                    new UsernamePasswordAuthenticationToken(username, null, Collections.emptyList());
+                    new UsernamePasswordAuthenticationToken(
+                            username, null, Collections.emptyList()
+                    );
             authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
             SecurityContextHolder.getContext().setAuthentication(authToken);
         }
 
         filterChain.doFilter(request, response);
+    }
+
+    /**
+     * Tries to extract the JWT from:
+     * 1. HttpOnly cookie "zupay_access"  ← new secure method
+     * 2. Authorization: Bearer header    ← fallback (mobile / old clients)
+     */
+    private String extractToken(HttpServletRequest request) {
+        // 1. Check cookie
+        Cookie[] cookies = request.getCookies();
+        if (cookies != null) {
+            for (Cookie c : cookies) {
+                if ("zupay_access".equals(c.getName())) {
+                    return c.getValue();
+                }
+            }
+        }
+
+        // 2. Fall back to Authorization header
+        String authHeader = request.getHeader("Authorization");
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            return authHeader.substring(7);
+        }
+
+        return null;
     }
 }

@@ -9,6 +9,8 @@ public class TransactionResponse {
     private String transactionId;
     private String senderUniqueId;
     private String receiverUniqueId;
+    private String senderName;
+    private String receiverName;
     private Double amount;
     private String description;
     private String status;
@@ -18,6 +20,8 @@ public class TransactionResponse {
         this.transactionId = tx.getTransactionId();
         this.senderUniqueId = tx.getSender().getUniqueUserId();
         this.receiverUniqueId = tx.getReceiver().getUniqueUserId();
+        this.senderName = tx.getSender().getName();
+        this.receiverName = tx.getReceiver().getName();
         this.amount = tx.getAmount();
         this.description = tx.getDescription();
         this.status = tx.getStatus().name();
@@ -27,6 +31,8 @@ public class TransactionResponse {
     public String getTransactionId() { return transactionId; }
     public String getSenderUniqueId() { return senderUniqueId; }
     public String getReceiverUniqueId() { return receiverUniqueId; }
+    public String getSenderName() { return senderName; }
+    public String getReceiverName() { return receiverName; }
     public Double getAmount() { return amount; }
     public String getDescription() { return description; }
     public String getStatus() { return status; }

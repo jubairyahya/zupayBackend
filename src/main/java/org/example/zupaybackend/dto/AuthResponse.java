@@ -22,17 +22,15 @@ public class AuthResponse {
     }
 
     public String getMessage() { return message; }
-    public String getToken() { return token; }
     public String getUniqueUserId() { return uniqueUserId; }
     public String getQrCode() { return qrCode; }
     public String getName() { return name; }
     public boolean isBankLinked() { return bankLinked; }
     public Double getBankBalance() { return bankBalance; }
-    public String getRefreshToken() {
-        return refreshToken;
-    }
 
-    public void setRefreshToken(String refreshToken) {
-        this.refreshToken = refreshToken;
-    }
+    public String getToken() { return token; }        // ✅ keep ONE
+    public void setToken(String token) { this.token = token; }  // ✅ keep
+
+    public String getRefreshToken() { return refreshToken; }
+    public void setRefreshToken(String refreshToken) { this.refreshToken = refreshToken; }
 }

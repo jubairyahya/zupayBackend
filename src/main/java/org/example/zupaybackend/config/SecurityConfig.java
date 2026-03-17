@@ -42,8 +42,12 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
 
-        // ✅ allowedOriginPatterns instead of allowedOrigins — fixes localhost CORS
-        config.setAllowedOriginPatterns(List.of("*"));
+
+        config.setAllowedOrigins(List.of(
+                "http://localhost:8081",
+                "http://localhost:19006",
+                "http://localhost:3000"
+        ));
 
         config.setAllowedMethods(Arrays.asList(
                 "GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"
