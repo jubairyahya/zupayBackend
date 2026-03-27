@@ -26,7 +26,7 @@ public class User {
     @Column(unique = true, nullable = false)
     private String uniqueUserId;
 
-    @Column(unique=true, length=2000)
+    @Column(columnDefinition = "TEXT")
     private String qrCode;
 
     @Column(nullable = false)
