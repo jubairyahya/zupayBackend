@@ -197,7 +197,7 @@ public class AuthController {
         }
     }
 
-    //   reads JWT from the HttpOnly cookie for web and authentication for mobile
+
     private String getTokenFromCookie(HttpServletRequest request) {
         Cookie[] cookies = request.getCookies();
         if (cookies != null) {
