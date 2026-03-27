@@ -64,14 +64,14 @@ public class TransactionController {
 
 
     private String getTokenFromCookie(HttpServletRequest request) {
-        //  Try cookie (web)
+
         Cookie[] cookies = request.getCookies();
         if (cookies != null) {
             for (Cookie c : cookies) {
                 if ("zupay_access".equals(c.getName())) return c.getValue();
             }
         }
-        //  Authorization header (mobile)
+
         String header = request.getHeader("Authorization");
         if (header != null && header.startsWith("Bearer ")) {
             return header.substring(7);

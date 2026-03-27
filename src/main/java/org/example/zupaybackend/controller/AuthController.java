@@ -49,7 +49,7 @@ public class AuthController {
             AuthResponse resp = authService.login(req);
 
             if (!"mobile".equals(client)) {
-                // Web — set HttpOnly cookie, strip token from body
+
                 response.setHeader("Set-Cookie",
                         "zupay_access=" + resp.getToken()
                                 + "; HttpOnly"
@@ -59,7 +59,7 @@ public class AuthController {
                 );
                 resp.setToken(null);
             }
-            // Mobile just gets the full response with token in body
+            // Mobile
             return ResponseEntity.ok(resp);
 
         } catch (RuntimeException e) {
@@ -77,7 +77,7 @@ public class AuthController {
             HttpServletRequest request,
             HttpServletResponse response) {
 
-        //  Blacklist the token from the cookie
+        //  Blacklist the token
         Cookie[] cookies = request.getCookies();
         if (cookies != null) {
             for (Cookie c : cookies) {
@@ -197,7 +197,7 @@ public class AuthController {
         }
     }
 
-    //  Helper reads JWT from the HttpOnly cookie for web and authentication for mobile
+    //   reads JWT from the HttpOnly cookie for web and authentication for mobile
     private String getTokenFromCookie(HttpServletRequest request) {
         Cookie[] cookies = request.getCookies();
         if (cookies != null) {

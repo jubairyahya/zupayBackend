@@ -11,7 +11,7 @@ import java.util.Date;
 public class JwtService {
     private final SecretKey SECRET_KEY = Keys.hmacShaKeyFor(
             "zupay_secret_12345678901234567890123456789012".getBytes()
-    ); // must be 32+ chars
+    );
 
     public String generateToken(User user) {
         return Jwts.builder()

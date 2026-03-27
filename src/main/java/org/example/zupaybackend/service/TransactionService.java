@@ -4,6 +4,8 @@ import org.example.zupaybackend.dto.TransactionRequest;
 import org.example.zupaybackend.dto.TransactionResponse;
 import org.example.zupaybackend.model.Transaction;
 import org.example.zupaybackend.model.User;
+import org.example.zupaybackend.model.Bill;
+import org.example.zupaybackend.model.BillType;
 import org.example.zupaybackend.repository.TransactionRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -44,6 +46,8 @@ public class TransactionService {
         tx.setTransactionId(UUID.randomUUID().toString());
         tx.setSender(sender);
         tx.setReceiver(receiver);
+        tx.setSenderName(sender.getName());
+        tx.setReceiverName(receiver.getName());
         tx.setAmount(request.getAmount());
         tx.setDescription(request.getDescription());
         tx.setTransactionTime(LocalDateTime.now());
@@ -62,5 +66,40 @@ public class TransactionService {
                 .stream()
                 .map(TransactionResponse::new)
                 .toList();
+    }
+    @Transactional
+    public TransactionResponse payBill(String userUniqueId,
+                                       Bill bill,
+                                       String reference,
+                                       BillType type,
+                                       String providerName) {
+
+        User user = authService.getUserByUsername(userUniqueId);
+
+        if (user.getBankBalance() < bill.getAmount()) {
+            throw new RuntimeException("Insufficient balance");
+        }
+
+        user.setBankBalance(user.getBankBalance() - bill.getAmount());
+
+        Transaction tx = new Transaction();
+        tx.setTransactionId(UUID.randomUUID().toString());
+        tx.setSender(user);
+        tx.setReceiver(null);
+
+        tx.setSenderName(user.getName());
+        tx.setReceiverName(providerName);
+
+        tx.setAmount(bill.getAmount());
+        tx.setDescription("Bill Payment - " + type.name());
+        tx.setTransactionTime(LocalDateTime.now());
+        tx.setStatus(Transaction.Status.SUCCESS);
+
+        tx.setTransactionType("BILL_PAYMENT");
+        tx.setBillReference(reference);
+
+        transactionRepository.save(tx);
+
+        return new TransactionResponse(tx);
     }
 }

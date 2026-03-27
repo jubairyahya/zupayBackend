@@ -39,7 +39,7 @@ public class AuthService {
         this.jwtService = jwtService;
 
     }
-    // Fetch user by unique user ID (or QR code)
+    // Fetch user
     public User getUserByUniqueId(String uniqueId) {
         return userRepository.findByUniqueUserId(uniqueId)
                 .orElseThrow(() -> new RuntimeException("User not found with ID: " + uniqueId));
@@ -47,17 +47,16 @@ public class AuthService {
 
     public User register(RegisterRequest req) {
 
-        // Strong password validation
+
         if (!STRONG_PASSWORD.matcher(req.getPassword()).matches()) {
             throw new RuntimeException("Weak password. Use upper, lower, number, special char, min 8 chars.");
         }
 
-        //  Username check
+
         if (userRepository.existsByUsername(req.getUsername())) {
             throw new RuntimeException("Username already exists");
         }
 
-        // Generate unique userId like joh5428
         String uniqueUserId;
         do {
             uniqueUserId = generateUniqueUserId(req.getName());
@@ -88,7 +87,7 @@ public class AuthService {
 
         String token = jwtService.generateToken(user);
 
-        // Generate refresh token
+
         String refreshToken = java.util.UUID.randomUUID().toString();
         user.setRefreshToken(refreshToken);
         userRepository.save(user);
@@ -132,7 +131,7 @@ public class AuthService {
     }
     public User getUserByUsername(String username) {
         return userRepository.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new RuntimeException("User not found: " + username));
     }
     @Transactional
     public User linkBankAccount(String username, String accountHolderName, String accountNumber, String sortCode) {

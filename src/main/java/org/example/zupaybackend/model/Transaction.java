@@ -9,6 +9,11 @@ public class Transaction {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @Column(name = "sender_name")
+    private String senderName;
+
+    @Column(name = "receiver_name")
+    private String receiverName;
 
     @Column(nullable=false, unique=true)
     private String transactionId; // unique receipt ID
@@ -31,11 +36,25 @@ public class Transaction {
     @Enumerated(EnumType.STRING)
     private Status status; // SUCCESS, FAILED, PENDING
 
+    @Column(name = "transaction_type")
+    private String transactionType; // P2P or BILL_PAYMENT
+
+    @Column(name = "bill_reference")
+    private String billReference;
+
     public enum Status { SUCCESS, FAILED, PENDING }
 
-    // Getters & Setters
+
+
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
+
+
+    public String getSenderName() { return senderName; }
+    public void setSenderName(String senderName) { this.senderName = senderName; }
+
+    public String getReceiverName() { return receiverName; }
+    public void setReceiverName(String receiverName) { this.receiverName = receiverName; }
 
     public String getTransactionId() { return transactionId; }
     public void setTransactionId(String transactionId) { this.transactionId = transactionId; }
@@ -57,4 +76,20 @@ public class Transaction {
 
     public Status getStatus() { return status; }
     public void setStatus(Status status) { this.status = status; }
+
+    public String getTransactionType() {
+        return transactionType;
+    }
+
+    public void setTransactionType(String transactionType) {
+        this.transactionType = transactionType;
+    }
+
+    public String getBillReference() {
+        return billReference;
+    }
+
+    public void setBillReference(String billReference) {
+        this.billReference = billReference;
+    }
 }
