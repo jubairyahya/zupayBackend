@@ -211,4 +211,9 @@ public class AuthController {
         }
         return null;
     }
+    @GetMapping("/")
+    public String healthCheck() {
+
+        return "ZuPay Auth API is Online";
+    }
 }
